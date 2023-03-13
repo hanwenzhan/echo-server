@@ -49,12 +49,13 @@ func main() {
 
 		for _, event := range events {
 			if event.Type == linebot.EventTypeMessage {
+
 				source := event.Source
-				log.Printf("server: UserID: %s\n", source.UserID) //, source.GroupID, source.RoomID)
 
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
 
+					log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
 					msg := fmt.Sprintf("Hi %s", source.UserID)
 
 					_, err = bot.PushMessage(source.UserID, linebot.NewTextMessage(msg)).Do()
