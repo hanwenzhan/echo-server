@@ -37,15 +37,9 @@ func main() {
 	// Setup HTTP Server for receiving requests from LINE platform
 	http.HandleFunc("/callback", func(w http.ResponseWriter, req *http.Request) {
 
-		reqBody, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			log.Printf("server: could not read request body: %s\n", err)
-		}
-		log.Printf("server: request body: %s\n", reqBody)
-
 		events, err := bot.ParseRequest(req)
 		if err != nil {
-			log.Println("server: ", err)
+			log.Println("server: ParseRequest: ", err)
 			if err == linebot.ErrInvalidSignature {
 				w.WriteHeader(400)
 			} else {
@@ -53,6 +47,12 @@ func main() {
 			}
 			return
 		}
+
+		reqBody, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			log.Printf("server: could not read request body: %s\n", err)
+		}
+		log.Printf("server: request body: %s\n", reqBody)
 
 		for _, event := range events {
 			if event.Type == linebot.EventTypeMessage {
