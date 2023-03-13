@@ -20,6 +20,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/line/line-bot-sdk-go/v7/linebot"
 )
@@ -54,20 +55,13 @@ func main() {
 
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-
-					log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
-					msg := fmt.Sprintf("your id is %s", source.UserID)
-
-					_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
-					if err != nil {
-						log.Println("server: ReplyMessage: ", err)
-					}
-
-				case *linebot.StickerMessage:
-					replyMessage := fmt.Sprintf(
-						"sticker id is %s, stickerResourceType is %s", message.StickerID, message.StickerResourceType)
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyMessage)).Do(); err != nil {
-						log.Println("server: ", err)
+					if strings.ToLower(message.Text) == "myid" {
+						log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
+						msg := fmt.Sprintf("your id is %s", source.UserID)
+						_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
+						if err != nil {
+							log.Println("server: ReplyMessage: ", err)
+						}
 					}
 				}
 			}
