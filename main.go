@@ -45,7 +45,7 @@ func main() {
 
 		events, err := bot.ParseRequest(req)
 		if err != nil {
-			log.Print("callback:", err)
+			log.Println("server: ", err)
 			if err == linebot.ErrInvalidSignature {
 				w.WriteHeader(400)
 			} else {
@@ -57,20 +57,23 @@ func main() {
 		for _, event := range events {
 			if event.Type == linebot.EventTypeMessage {
 				source := event.Source
-				log.Printf("UserID: %s, GroupID: %s, RoomID: %s", source.UserID, source.GroupID, source.RoomID)
+				log.Printf("server: UserID: %s\n", source.UserID) //, source.GroupID, source.RoomID)
+
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
+					bot.BroadcastMessage(linebot.NewTextMessage("Hi " + source.UserID))
+
 					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
-						log.Print("callback:", err)
+						log.Println("server: ", err)
 					}
 
-					bot.BroadcastMessage(linebot.NewTextMessage("hello"))
-
 				case *linebot.StickerMessage:
+					bot.BroadcastMessage(linebot.NewTextMessage("Hi Hi " + source.UserID))
+
 					replyMessage := fmt.Sprintf(
 						"sticker id is %s, stickerResourceType is %s", message.StickerID, message.StickerResourceType)
 					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyMessage)).Do(); err != nil {
-						log.Print("callback:", err)
+						log.Println("server: ", err)
 					}
 				}
 			}
