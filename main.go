@@ -58,18 +58,17 @@ func main() {
 			case *linebot.TextMessage:
 				log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
 				msg := fmt.Sprintf("your id is %s", source.UserID)
-				//*
 				_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
 				if err != nil {
 					log.Println("server: ReplyMessage: ", err)
 				}
-				//*/
-				/*
-					_, err = bot.PushMessage(source.UserID, linebot.NewTextMessage(msg)).Do()
-					if err != nil {
-						log.Println("server; PushMessage: ", err)
-					}
-				*/
+			case *linebot.StickerMessage:
+				log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
+				msg := fmt.Sprintf("your id is %s", source.UserID)
+				_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
+				if err != nil {
+					log.Println("server: ReplyMessage: ", err)
+				}
 			}
 		}
 	})
