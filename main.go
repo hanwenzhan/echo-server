@@ -20,7 +20,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/line/line-bot-sdk-go/v7/linebot"
 )
@@ -56,9 +55,6 @@ func main() {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
 					log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
-					if strings.EqualFold(message.Text, "myid") {
-						continue
-					}
 					msg := fmt.Sprintf("your id is %s", source.UserID)
 					_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
 					if err != nil {
@@ -87,9 +83,11 @@ func main() {
 		w.Write(b)
 	})
 
-	log.Printf("server version: %s \n", "0.0.1")
+	log.Printf("server version: %s \n", "0.0.2")
 	//
 	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
 		log.Fatal(err)
 	}
+
+	log.Println("server exited.")
 }
