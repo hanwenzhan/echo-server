@@ -5,7 +5,7 @@ FROM golang:alpine AS build
 ADD . /src/
 WORKDIR /src
 RUN go mod tidy
-RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o /build/main main.go
+RUN go build -o /build/main main.go
 
 # Build Docker Image
 FROM scratch 
