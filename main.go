@@ -87,6 +87,7 @@ func main() {
 		w.Write(b)
 	})
 
+	log.Printf("server version: %s \n", "0.0.1")
 	//
 	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
 		log.Fatal(err)
