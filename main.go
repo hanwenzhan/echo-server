@@ -48,25 +48,28 @@ func main() {
 		}
 
 		for _, event := range events {
-			if event.Type == linebot.EventTypeMessage {
+			if event.Type != linebot.EventTypeMessage {
+				continue
+			}
 
-				source := event.Source
+			source := event.Source
 
-				switch message := event.Message.(type) {
-				case *linebot.TextMessage:
-					log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
-					msg := fmt.Sprintf("your id is %s", source.UserID)
-					/*
-						_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
-						if err != nil {
-							log.Println("server: ReplyMessage: ", err)
-						}
-					*/
+			switch message := event.Message.(type) {
+			case *linebot.TextMessage:
+				log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
+				msg := fmt.Sprintf("your id is %s", source.UserID)
+				//*
+				_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
+				if err != nil {
+					log.Println("server: ReplyMessage: ", err)
+				}
+				//*/
+				/*
 					_, err = bot.PushMessage(source.UserID, linebot.NewTextMessage(msg)).Do()
 					if err != nil {
 						log.Println("server; PushMessage: ", err)
 					}
-				}
+				*/
 			}
 		}
 	})
