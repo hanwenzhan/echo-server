@@ -56,7 +56,7 @@ func main() {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
 					log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
-					if strings.ToLower(message.Text) != "myid" {
+					if strings.EqualFold(message.Text, "myid") {
 						continue
 					}
 					msg := fmt.Sprintf("your id is %s", source.UserID)
