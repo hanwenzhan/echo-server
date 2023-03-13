@@ -17,7 +17,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -48,12 +47,6 @@ func main() {
 			return
 		}
 
-		reqBody, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			log.Printf("server: could not read request body: %s\n", err)
-		}
-		log.Printf("server: request body: %s\n", reqBody)
-
 		for _, event := range events {
 			if event.Type == linebot.EventTypeMessage {
 				source := event.Source
@@ -61,15 +54,17 @@ func main() {
 
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					bot.BroadcastMessage(linebot.NewTextMessage("Hi " + source.UserID))
-
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
-						log.Println("server: ", err)
+					if _, err := bot.PushMessage(source.UserID, linebot.NewTextMessage(source.UserID)).Do(); err != nil {
+						log.Println("server: PushMessage: ", err)
 					}
 
+					/*
+						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
+							log.Println("server: ReplyMessage: ", err)
+						}
+					*/
 				case *linebot.StickerMessage:
 					bot.BroadcastMessage(linebot.NewTextMessage("Hi Hi " + source.UserID))
-
 					replyMessage := fmt.Sprintf(
 						"sticker id is %s, stickerResourceType is %s", message.StickerID, message.StickerResourceType)
 					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyMessage)).Do(); err != nil {
