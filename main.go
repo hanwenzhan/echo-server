@@ -54,17 +54,19 @@ func main() {
 
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					replyMessage := fmt.Sprintf("Hi %s", source.UserID)
-					_, err := bot.PushMessage(source.UserID, linebot.NewTextMessage(replyMessage)).Do()
+
+					msg := fmt.Sprintf("Hi %s", source.UserID)
+
+					_, err = bot.PushMessage(source.UserID, linebot.NewTextMessage(msg)).Do()
 					if err != nil {
 						log.Println("server: PushMessage: ", err)
 					}
 
-					/*
-						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
-							log.Println("server: ReplyMessage: ", err)
-						}
-					*/
+					_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
+					if err != nil {
+						log.Println("server: ReplyMessage: ", err)
+					}
+
 				case *linebot.StickerMessage:
 					bot.BroadcastMessage(linebot.NewTextMessage("Hi Hi " + source.UserID))
 					replyMessage := fmt.Sprintf(
