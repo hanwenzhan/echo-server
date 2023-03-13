@@ -17,6 +17,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -35,6 +36,13 @@ func main() {
 
 	// Setup HTTP Server for receiving requests from LINE platform
 	http.HandleFunc("/callback", func(w http.ResponseWriter, req *http.Request) {
+
+		reqBody, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			log.Printf("server: could not read request body: %s\n", err)
+		}
+		log.Printf("server: request body: %s\n", reqBody)
+
 		events, err := bot.ParseRequest(req)
 		if err != nil {
 			log.Print("callback:", err)
@@ -45,13 +53,19 @@ func main() {
 			}
 			return
 		}
+
 		for _, event := range events {
 			if event.Type == linebot.EventTypeMessage {
+				source := event.Source
+				log.Printf("UserID: %s, GroupID: %s, RoomID: %s", source.UserID, source.GroupID, source.RoomID)
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
 					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
 						log.Print("callback:", err)
 					}
+
+					bot.BroadcastMessage(linebot.NewTextMessage("hello"))
+
 				case *linebot.StickerMessage:
 					replyMessage := fmt.Sprintf(
 						"sticker id is %s, stickerResourceType is %s", message.StickerID, message.StickerResourceType)
