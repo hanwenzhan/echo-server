@@ -54,7 +54,9 @@ func main() {
 
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					if _, err := bot.PushMessage(source.UserID, linebot.NewTextMessage(source.UserID)).Do(); err != nil {
+					replyMessage := fmt.Sprintf("Hi %s", source.UserID)
+					_, err := bot.PushMessage(source.UserID, linebot.NewTextMessage(replyMessage)).Do()
+					if err != nil {
 						log.Println("server: PushMessage: ", err)
 					}
 
@@ -93,8 +95,7 @@ func main() {
 		w.Write(b)
 	})
 
-	// This is just a sample code.
-	// For actually use, you must support HTTPS by using `ListenAndServeTLS`, reverse proxy or etc.
+	//
 	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
 		log.Fatal(err)
 	}
