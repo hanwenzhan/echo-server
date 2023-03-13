@@ -15,6 +15,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -51,6 +52,25 @@ func main() {
 		}
 	})
 	http.Handle("/callback", handler)
+
+	//
+	type Info struct {
+		Message string `json:"message"`
+	}
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		m := &Info{
+			Message: "Hello World!",
+		}
+		b, err := json.Marshal(m)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		w.Write(b)
+	})
+
 	// This is just a sample code.
 	// For actually use, you must support HTTPS by using `ListenAndServeTLS`, reverse proxy or etc.
 	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
