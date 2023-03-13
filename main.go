@@ -56,12 +56,7 @@ func main() {
 				case *linebot.TextMessage:
 
 					log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
-					msg := fmt.Sprintf("Hi %s", source.UserID)
-
-					_, err = bot.PushMessage(source.UserID, linebot.NewTextMessage(msg)).Do()
-					if err != nil {
-						log.Println("server: PushMessage: ", err)
-					}
+					msg := fmt.Sprintf("your id is %s", source.UserID)
 
 					_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
 					if err != nil {
@@ -69,7 +64,6 @@ func main() {
 					}
 
 				case *linebot.StickerMessage:
-					bot.BroadcastMessage(linebot.NewTextMessage("Hi Hi " + source.UserID))
 					replyMessage := fmt.Sprintf(
 						"sticker id is %s, stickerResourceType is %s", message.StickerID, message.StickerResourceType)
 					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyMessage)).Do(); err != nil {
