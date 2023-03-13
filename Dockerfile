@@ -11,5 +11,5 @@ RUN go build -o /build/main main.go
 FROM scratch 
 LABEL Description="go echo server"
 
-COPY --link --from=build /build/main /app/main
+COPY --from=build /build/main /app/main
 ENTRYPOINT ["/app/main"]
