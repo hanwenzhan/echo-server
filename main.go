@@ -48,13 +48,14 @@ func main() {
 		}
 
 		for _, event := range events {
+
+			log.Printf("events: %+v", event)
 			if event.Type != linebot.EventTypeMessage {
 				continue
 			}
 
-			log.Printf("%+v", event)
-
 			source := event.Source
+			log.Printf("source: %+v", source)
 
 			switch message := event.Message.(type) {
 			case *linebot.TextMessage:
