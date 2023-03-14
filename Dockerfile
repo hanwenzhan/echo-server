@@ -11,7 +11,7 @@ RUN go build -o /build/main main.go
 FROM alpine 
 LABEL Description="go echo server"
 
-RUN apk add --no-cache ca-certificates
+#RUN apk add --no-cache ca-certificates
 
 COPY --from=build /build/main /app/main
 ENTRYPOINT ["/app/main"]
