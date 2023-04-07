@@ -21,10 +21,16 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/line/line-bot-sdk-go/v7/linebot"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Error loading .env file")
+	}
+
 	bot, err := linebot.New(
 		os.Getenv("CHANNEL_SECRET"),
 		os.Getenv("CHANNEL_TOKEN"),
@@ -33,8 +39,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	BASE_URL := os.Getenv("BASE_URL")
 	// Setup HTTP Server for receiving requests from LINE platform
-	http.HandleFunc("/callback", func(w http.ResponseWriter, req *http.Request) {
+	http.HandleFunc(BASE_URL+"/callback", func(w http.ResponseWriter, req *http.Request) {
 
 		events, err := bot.ParseRequest(req)
 		if err != nil {
@@ -61,14 +68,14 @@ func main() {
 			switch message := event.Message.(type) {
 			case *linebot.TextMessage:
 				log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
-				msg := fmt.Sprintf("your id is %s", source.UserID)
+				msg := fmt.Sprintf("你的 LID 是：\n[%s]", source.UserID)
 				_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
 				if err != nil {
 					log.Println("server: ReplyMessage: ", err)
 				}
 			case *linebot.StickerMessage:
 				log.Printf("server: UserID: %s, Text: %s\n", source.UserID, message.Text)
-				msg := fmt.Sprintf("your id is %s", source.UserID)
+				msg := fmt.Sprintf("你的 LID 是：\n[%s]", source.UserID)
 				_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(msg)).Do()
 				if err != nil {
 					log.Println("server: ReplyMessage: ", err)
@@ -81,7 +88,7 @@ func main() {
 	type Info struct {
 		Message string `json:"message"`
 	}
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc(BASE_URL+"/", func(w http.ResponseWriter, r *http.Request) {
 		m := &Info{
 			Message: "Hello World!",
 		}
@@ -95,11 +102,11 @@ func main() {
 		w.Write(b)
 	})
 
-	log.Printf("server version: %s \n", "0.0.3")
+	PORT := os.Getenv("PORT")
+	log.Println("listen on :", PORT)
 	//
-	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
+	if err := http.ListenAndServe(":"+PORT, nil); err != nil {
 		log.Fatal(err)
 	}
-
 	log.Println("server exited.")
 }

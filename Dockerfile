@@ -9,9 +9,11 @@ RUN go build -o /build/main main.go
 
 # Build Docker Image
 FROM alpine 
-LABEL Description="go echo server"
+LABEL Description="line echo server"
 
 #RUN apk add --no-cache ca-certificates
 
+COPY .env /app/.env
 COPY --from=build /build/main /app/main
-ENTRYPOINT ["/app/main"]
+WORKDIR /app
+ENTRYPOINT ["./main"]
